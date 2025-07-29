@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-manrope), var(--font-noto-sans), sans-serif;
+  --font-mono: var(--font-noto-sans), monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Manrope', 'Noto Sans', sans-serif;
+}
+
+/* A4 Resume Styles */
+.resume-template {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Ensure A4 dimensions are maintained */
+.a4-container {
+  width: 210mm;
+  height: 297mm;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  margin: 0 auto;
+  display: block;
+}
+
+/* Remove any conflicting styles */
+#resume-content {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ensure proper printing */
+@media print {
+  .a4-container {
+    width: 210mm;
+    height: 297mm;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+  
+  body {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+/* Resume Builder Page Styles */
+.page-container {
+  max-width: 210mm;
+  min-height: 297mm;
+  margin: 2rem auto;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  padding: 2.5rem;
+}
+
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #48bb78;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+  background-color: #48bb78;
+}
+
