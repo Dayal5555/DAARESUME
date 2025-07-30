@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
-// import bcrypt from 'bcryptjs';
-// import jwt from 'jsonwebtoken';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { RegisterRequest, LoginRequest, AuthResponse } from '../types/auth';
 import { 
   validateRegisterRequest, 
   validateLoginRequest, 
   sanitizeInput 
 } from '../utilities/validation';
+import { User } from '../db';
 
-// const JWT_SECRET = process.env['JWT_SECRET'] || 'your-secret-key';
-// const SALT_ROUNDS = 12;
+const JWT_SECRET = process.env['JWT_SECRET'] || 'your-secret-key';
+const SALT_ROUNDS = 12;
 
 export async function registerUser(req: Request, res: Response): Promise<void> {
   try {
@@ -21,37 +22,60 @@ export async function registerUser(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const { username, email } = req.body as RegisterRequest;
+    const { username, email, password } = req.body as RegisterRequest;
     
     // Sanitize inputs
     const sanitizedUsername = sanitizeInput(username);
     const sanitizedEmail = sanitizeInput(email);
     
-    // TODO: Add database connection and user creation logic
-    // For now, just return a placeholder response
     console.log('Registration attempt:', { 
       username: sanitizedUsername, 
       email: sanitizedEmail 
     });
     
-    // TODO: Hash password with bcrypt
-    // const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
+    // Hash password with bcrypt
+    const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
     
-    // TODO: Save user to database
+    // Check if user already exists
+    const existingUser = await User.findOne({
+      $or: [{ email: sanitizedEmail }, { username: sanitizedUsername }]
+    });
     
-    // TODO: Generate JWT token
-    // const token = jwt.sign(
-    //   { userId: user.id, email: sanitizedEmail },
-    //   JWT_SECRET,
-    //   { expiresIn: '24h' }
-    // );
+    if (existingUser) {
+      res.status(409).json({
+        success: false,
+        message: 'User with this email or username already exists'
+      } as AuthResponse);
+      return;
+    }
+    
+    // Create new user
+    const newUser = new User({
+      username: sanitizedUsername,
+      email: sanitizedEmail,
+      password_hash: hashedPassword
+    });
+    
+    await newUser.save();
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: newUser._id, email: sanitizedEmail },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
     
     res.status(201).json({
       success: true,
-      message: 'User registration endpoint - placeholder logic',
+      message: 'User registered successfully',
       data: { 
-        username: sanitizedUsername, 
-        email: sanitizedEmail 
+        user: {
+          id: newUser._id,
+          username: newUser.username,
+          email: newUser.email,
+          createdAt: newUser.createdAt
+        },
+        token
       }
     } as AuthResponse);
   } catch (error) {
@@ -73,23 +97,53 @@ export async function loginUser(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    const { email } = req.body as LoginRequest;
+    const { email, password } = req.body as LoginRequest;
     
     // Sanitize inputs
     const sanitizedEmail = sanitizeInput(email);
     
-    // TODO: Add database connection and user authentication logic
-    // For now, just return a placeholder response
     console.log('Login attempt:', { email: sanitizedEmail });
     
-    // TODO: Find user in database
-    // TODO: Compare password with bcrypt.compare()
-    // TODO: Generate JWT token
+    // Find user in database
+    const user = await User.findOne({ email: sanitizedEmail });
+    
+    if (!user) {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      } as AuthResponse);
+      return;
+    }
+    
+    // Compare password with bcrypt.compare()
+    const isPasswordValid = await bcrypt.compare(password, user.password_hash);
+    
+    if (!isPasswordValid) {
+      res.status(401).json({
+        success: false,
+        message: 'Invalid email or password'
+      } as AuthResponse);
+      return;
+    }
+    
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
     
     res.status(200).json({
       success: true,
-      message: 'User login endpoint - placeholder logic',
-      data: { email: sanitizedEmail }
+      message: 'Login successful',
+      data: { 
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email
+        },
+        token
+      }
     } as AuthResponse);
   } catch (error) {
     console.error('Login error:', error);

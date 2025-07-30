@@ -24,6 +24,6 @@
     "noPropertyAccessFromIndexSignature": true,
     "noUncheckedIndexedAccess": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "src/db.ts"],
   "exclude": ["node_modules", "dist"]
 } 
