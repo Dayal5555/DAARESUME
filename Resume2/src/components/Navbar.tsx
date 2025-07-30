@@ -22,13 +22,6 @@ const Navbar: React.FC<NavbarProps> = ({ showCreateButton = false }) => {
     }
   };
 
-  const handleClearStorage = () => {
-    // Clear all localStorage data
-    localStorage.clear();
-    // Reload the page to reset the app state
-    window.location.reload();
-  };
-
   return (
     <header className="bg-white shadow-sm">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
@@ -75,16 +68,13 @@ const Navbar: React.FC<NavbarProps> = ({ showCreateButton = false }) => {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-4">
-          {/* Temporary Clear Storage Button - only show in development */}
-          {process.env.NODE_ENV === 'development' && (
-            <button
-              className="bg-red-500 text-white font-semibold px-3 py-2 rounded-lg hover:bg-red-600 transition-colors text-sm"
-              onClick={handleClearStorage}
-              title="Clear all stored data (temporary for testing)"
-            >
-              Clear Data
-            </button>
-          )}
+          {/* Sign Up Button */}
+          <Link
+            href="/register"
+            className="bg-teal-500 text-white font-semibold px-4 py-2 rounded-lg hover:bg-teal-600 transition-colors"
+          >
+            Sign Up
+          </Link>
           
           {/* Download button for resume builder */}
           {!showCreateButton && (
