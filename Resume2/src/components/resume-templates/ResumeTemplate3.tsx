@@ -38,6 +38,14 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const [educationInstitutionValue, setEducationInstitutionValue] = useState('');
   const [editingEducationDescription, setEditingEducationDescription] = useState<string | null>(null);
   const [educationDescriptionValue, setEducationDescriptionValue] = useState('');
+  
+  // Individual contact field editing states
+  const [editingAddress, setEditingAddress] = useState(false);
+  const [addressValue, setAddressValue] = useState('');
+  const [editingEmail, setEditingEmail] = useState(false);
+  const [emailValue, setEmailValue] = useState('');
+  const [editingWebsite, setEditingWebsite] = useState(false);
+  const [websiteValue, setWebsiteValue] = useState('');
 
   console.log('ResumeTemplate3 rendering with data:', { personalInfo, experience, education, skills });
 
@@ -514,6 +522,146 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
     }
   };
 
+  // Address editing handlers
+  const handleAddressClick = () => {
+    if (isEditable) {
+      // Clear all other editing states
+      setEditingName(false);
+      setEditingSummary(false);
+      setEditingSkill(null);
+      setEditingExperience(null);
+      setEditingEducation(null);
+      setEditingRole(false);
+      setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingExperienceTitle(null);
+      setEditingExperienceDates(null);
+      setEditingEducationDegree(null);
+      setEditingEducationDates(null);
+      setEditingEducationInstitution(null);
+      setEditingEducationDescription(null);
+      
+      setEditingAddress(true);
+      setAddressValue(`${finalDisplayData.personalInfo.address}, ${finalDisplayData.personalInfo.city}`);
+    }
+  };
+
+  const handleAddressSave = () => {
+    if (isEditable && !useSampleData) {
+      const [address, city] = addressValue.split(', ');
+      dispatch({
+        type: 'UPDATE_PERSONAL_INFO',
+        payload: { 
+          ...personalInfo,
+          address: address || '',
+          city: city || ''
+        }
+      });
+    }
+    setTimeout(() => setEditingAddress(false), 50);
+  };
+
+  const handleAddressKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddressSave();
+    } else if (e.key === 'Escape') {
+      setEditingAddress(false);
+    }
+  };
+
+  // Email editing handlers
+  const handleEmailClick = () => {
+    if (isEditable) {
+      // Clear all other editing states
+      setEditingName(false);
+      setEditingSummary(false);
+      setEditingSkill(null);
+      setEditingExperience(null);
+      setEditingEducation(null);
+      setEditingRole(false);
+      setEditingContact(false);
+      setEditingAddress(false);
+      setEditingWebsite(false);
+      setEditingExperienceTitle(null);
+      setEditingExperienceDates(null);
+      setEditingEducationDegree(null);
+      setEditingEducationDates(null);
+      setEditingEducationInstitution(null);
+      setEditingEducationDescription(null);
+      
+      setEditingEmail(true);
+      setEmailValue(finalDisplayData.personalInfo.email || '');
+    }
+  };
+
+  const handleEmailSave = () => {
+    if (isEditable && !useSampleData) {
+      dispatch({
+        type: 'UPDATE_PERSONAL_INFO',
+        payload: { 
+          ...personalInfo,
+          email: emailValue
+        }
+      });
+    }
+    setTimeout(() => setEditingEmail(false), 50);
+  };
+
+  const handleEmailKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleEmailSave();
+    } else if (e.key === 'Escape') {
+      setEditingEmail(false);
+    }
+  };
+
+  // Website editing handlers
+  const handleWebsiteClick = () => {
+    if (isEditable) {
+      // Clear all other editing states
+      setEditingName(false);
+      setEditingSummary(false);
+      setEditingSkill(null);
+      setEditingExperience(null);
+      setEditingEducation(null);
+      setEditingRole(false);
+      setEditingContact(false);
+      setEditingAddress(false);
+      setEditingEmail(false);
+      setEditingExperienceTitle(null);
+      setEditingExperienceDates(null);
+      setEditingEducationDegree(null);
+      setEditingEducationDates(null);
+      setEditingEducationInstitution(null);
+      setEditingEducationDescription(null);
+      
+      setEditingWebsite(true);
+      setWebsiteValue(finalDisplayData.personalInfo.website || '');
+    }
+  };
+
+  const handleWebsiteSave = () => {
+    if (isEditable && !useSampleData) {
+      dispatch({
+        type: 'UPDATE_PERSONAL_INFO',
+        payload: { 
+          ...personalInfo,
+          website: websiteValue
+        }
+      });
+    }
+    setTimeout(() => setEditingWebsite(false), 50);
+  };
+
+  const handleWebsiteKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleWebsiteSave();
+    } else if (e.key === 'Escape') {
+      setEditingWebsite(false);
+    }
+  };
+
   // Experience title editing handlers
   const handleExperienceTitleClick = (exp: Experience) => {
     if (isEditable) {
@@ -796,98 +944,185 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   };
 
   return (
-    <div id="resume-content" className={`resume-template h-full w-full flex flex-col font-poppins ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : ''}`}>
-      <div className={`h-full w-full flex flex-col p-4 transition-colors duration-200 ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : 'bg-[#fefffc]'}`}>
+    <div id="resume-content" className={`resume-template h-full w-full flex flex-col font-poppins ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : ''}`}>
+              <div className={`h-full w-full flex flex-col p-4 transition-colors duration-200 ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : 'bg-[#fefffc]'}`}>
         
         {/* Main Content */}
         <div className="flex-1 p-2">
           {/* Header Section */}
           <header className="text-start mb-3">
-            {editingName ? (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={nameValue}
-                  onChange={(e) => setNameValue(e.target.value)}
-                  onBlur={handleNameSave}
-                  onKeyDown={handleNameKeyPress}
-                  className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-transparent outline-none w-full z-10 focus:ring-0 focus:border-0"
-                  style={{
-                    background: 'transparent',
-                  }}
-                  autoFocus
-                />
-                {/* Placeholder layer that shows when input is empty */}
-                {nameValue.trim() === '' && (
-                  <h1 className="absolute inset-0 text-3xl font-normal italic normal-case text-gray-400 font-poppins pointer-events-none z-5">
-                    Your name
+            {useSampleData ? (
+              // Template version - hard-coded name, non-editable
+              <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins">
+                ESTELLE DARCY
+              </h1>
+            ) : (
+              // Editable version
+              editingName ? (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={nameValue}
+                    onChange={(e) => setNameValue(e.target.value)}
+                    onBlur={handleNameSave}
+                    onKeyDown={handleNameKeyPress}
+                    className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                    autoFocus
+                  />
+                  {/* Placeholder layer that shows when input is empty */}
+                  {nameValue.trim() === '' && (
+                    <h1 className="absolute inset-0 text-3xl font-normal italic normal-case text-gray-400 font-poppins pointer-events-none z-5">
+                      Your name
+                    </h1>
+                  )}
+                  {/* Background size reference */}
+                  <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
+                    {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
+                      `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
+                      "Your name"
+                    }
                   </h1>
-                )}
-                {/* Background size reference */}
-                <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
+                </div>
+              ) : (
+                <h1 
+                  className={`text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                  onClick={handleNameClick}
+                >
                   {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
                     `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
-                    "Your name"
+                    (isEditable ? <span className="text-gray-400 italic font-normal normal-case">Your name</span> : "")
                   }
                 </h1>
-              </div>
-            ) : (
-              <h1 
-                className={`text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-                onClick={handleNameClick}
-              >
-                {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
-                  `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
-                  (isEditable ? <span className="text-gray-400 italic font-normal normal-case">Your name</span> : "")
-                }
-              </h1>
+              )
             )}
-            {editingRole ? (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={roleValue}
-                  onChange={(e) => setRoleValue(e.target.value)}
-                  onBlur={handleRoleSave}
-                  onKeyDown={handleRoleKeyPress}
-                  className="absolute inset-0 text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic"
-                  placeholder="The role you are applying for?"
-                  autoFocus
-                />
-                <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter opacity-0">
-                  {finalDisplayData.personalInfo.roleApplyingFor || "The role you are applying for?"}
-                </p>
-              </div>
-            ) : (
-              <p 
-                className={`text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-                onClick={handleRoleClick}
-              >
-                {finalDisplayData.personalInfo.roleApplyingFor || (isEditable ? <span className="text-gray-400 italic">The role you are applying for?</span> : "")}
+            {useSampleData ? (
+              // Template version - hard-coded role, non-editable
+              <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter">
+                PROCESS ENGINEER
               </p>
+            ) : (
+              // Editable version
+              editingRole ? (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={roleValue}
+                    onChange={(e) => setRoleValue(e.target.value)}
+                    onBlur={handleRoleSave}
+                    onKeyDown={handleRoleKeyPress}
+                    className="absolute inset-0 text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic"
+                    placeholder="Position"
+                    autoFocus
+                  />
+                  <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter opacity-0">
+                    {finalDisplayData.personalInfo.roleApplyingFor || "Position"}
+                  </p>
+                </div>
+              ) : (
+                <p 
+                  className={`text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                  onClick={handleRoleClick}
+                >
+                  {finalDisplayData.personalInfo.roleApplyingFor || (isEditable ? <span className="text-gray-400 italic">Position</span> : "")}
+                </p>
+              )
             )}
-            {editingContact ? (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={contactValue}
-                  onChange={(e) => setContactValue(e.target.value)}
-                  onBlur={handleContactSave}
-                  onKeyDown={handleContactKeyPress}
-                  className="absolute inset-0 text-sm font-medium text-gray-600 font-inter space-x-1 bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
-                  autoFocus
-                />
-                <p className="text-sm font-medium text-gray-600 font-inter space-x-1 opacity-0">
-                  <span> {finalDisplayData.personalInfo.address}, {finalDisplayData.personalInfo.city}</span> <span>|</span><span>{finalDisplayData.personalInfo.email}</span> <span>|</span> <span>{finalDisplayData.personalInfo.website}</span>
-                </p>
-              </div>
-            ) : (
-              <p 
-                className={`text-sm font-medium text-gray-600 font-inter space-x-1 ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-                onClick={handleContactClick}
-              >
-               <span> {finalDisplayData.personalInfo.address}, {finalDisplayData.personalInfo.city}</span> <span>|</span><span>{finalDisplayData.personalInfo.email}</span> <span>|</span> <span>{finalDisplayData.personalInfo.website}</span>
+            {useSampleData ? (
+              // Template version - hard-coded, non-editable
+              <p className="text-sm font-medium text-gray-600 font-inter space-x-1">
+                <span>123 Anywhere St., Any City</span> <span>|</span> <span>hello@reallygreatsite.com</span> <span>|</span> <span>www.reallygreatsite.com</span>
               </p>
+            ) : (
+              // Editable version with placeholders
+              <div className="text-sm font-medium text-gray-600 font-inter space-x-1">
+                {/* Address Field */}
+                {editingAddress ? (
+                  <span className="relative inline-block">
+                    <input
+                      type="text"
+                      value={addressValue}
+                      onChange={(e) => setAddressValue(e.target.value)}
+                      onBlur={handleAddressSave}
+                      onKeyDown={handleAddressKeyPress}
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      autoFocus
+                    />
+                    {addressValue.trim() === '' && (
+                      <span className="absolute inset-0 text-sm font-medium text-gray-400 font-inter italic pointer-events-none z-5 px-2 py-1">
+                        City
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <span 
+                    className={`${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                    onClick={handleAddressClick}
+                  >
+                    {(finalDisplayData.personalInfo.address && finalDisplayData.personalInfo.city) ? 
+                      `${finalDisplayData.personalInfo.address}, ${finalDisplayData.personalInfo.city}` : 
+                      (isEditable ? <span className="text-gray-400 italic">City</span> : "")
+                    }
+                  </span>
+                )}
+                
+                <span> | </span>
+                
+                {/* Email Field */}
+                {editingEmail ? (
+                  <span className="relative inline-block">
+                    <input
+                      type="text"
+                      value={emailValue}
+                      onChange={(e) => setEmailValue(e.target.value)}
+                      onBlur={handleEmailSave}
+                      onKeyDown={handleEmailKeyPress}
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      autoFocus
+                    />
+                    {emailValue.trim() === '' && (
+                      <span className="absolute inset-0 text-sm font-medium text-gray-400 font-inter italic pointer-events-none z-5 px-2 py-1">
+                        Email
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <span 
+                    className={`${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                    onClick={handleEmailClick}
+                  >
+                    {finalDisplayData.personalInfo.email || (isEditable ? <span className="text-gray-400 italic">Email</span> : "")}
+                  </span>
+                )}
+                
+                <span> | </span>
+                
+                {/* Website/LinkedIn Field */}
+                {editingWebsite ? (
+                  <span className="relative inline-block">
+                    <input
+                      type="text"
+                      value={websiteValue}
+                      onChange={(e) => setWebsiteValue(e.target.value)}
+                      onBlur={handleWebsiteSave}
+                      onKeyDown={handleWebsiteKeyPress}
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      autoFocus
+                    />
+                    {websiteValue.trim() === '' && (
+                      <span className="absolute inset-0 text-sm font-medium text-gray-400 font-inter italic pointer-events-none z-5 px-2 py-1">
+                        LinkedIn
+                      </span>
+                    )}
+                  </span>
+                ) : (
+                  <span 
+                    className={`${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                    onClick={handleWebsiteClick}
+                  >
+                    {finalDisplayData.personalInfo.website || (isEditable ? <span className="text-gray-400 italic">LinkedIn</span> : "")}
+                  </span>
+                )}
+              </div>
             )}
           </header>
 
@@ -1038,8 +1273,14 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         onChange={(e) => setExperienceValue(e.target.value)}
                         onBlur={handleExperienceSave}
                         onKeyDown={handleExperienceKeyPress}
-                        className="absolute inset-0 text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium w-full rounded-md bg-white shadow-lg z-10 focus:ring-0 focus:border-0"
-                        rows={4}
+                        className="absolute inset-0 text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium w-full rounded-md bg-white shadow-lg z-10 focus:ring-0 focus:border-0 resize-none"
+                        style={{ minHeight: 'auto', height: 'auto' }}
+                        rows={1}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          target.style.height = 'auto';
+                          target.style.height = target.scrollHeight + 'px';
+                        }}
                       />
                       <p className="text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium opacity-0">
                         {exp.description}

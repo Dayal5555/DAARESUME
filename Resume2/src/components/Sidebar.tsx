@@ -55,7 +55,6 @@ const TemplatesIcon = () => (
 
 // --- Data for Sidebar Sections ---
 const sidebarSections = [
-  { id: 'personal-info', label: 'Personal Info', icon: <UserIcon /> },
   { id: 'experience', label: 'Experience', icon: <BriefcaseIcon /> },
   { id: 'education', label: 'Education', icon: <GraduationCapIcon /> },
   { id: 'skills', label: 'Skills', icon: <ListBulletsIcon /> },
@@ -83,7 +82,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <div className="layout-content-container flex flex-col w-80">
-      <div className="flex h-full min-h-[700px] flex-col justify-between bg-slate-50 p-4">
+      <div className="flex flex-col bg-slate-50 p-4">
         <div className="flex flex-col gap-4">
           {/* Template Selection */}
           <div className="mb-4">

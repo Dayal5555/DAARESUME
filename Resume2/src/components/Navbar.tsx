@@ -23,25 +23,17 @@ const Navbar: React.FC<NavbarProps> = ({ showCreateButton = false }) => {
   };
 
   return (
-    <header className="w-full border-b border-gray-200 bg-white h-16 flex items-center px-5 shadow-sm">
-      <div className="flex items-center gap-8 flex-1 min-w-0">
+    <header className="w-full border-b border-gray-200 bg-white h-12 flex items-center px-5 shadow-sm">
+      <div className="flex items-center gap-6 flex-1 min-w-0">
         {/* Logo and Brand */}
         <Link href="/" className="flex items-center hover:opacity-80 transition-opacity">
-          <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+          <h1 className="text-lg font-bold text-gray-800 tracking-tight">
             HumanCv.<span className="text-[#22C8A9]">AI</span>
           </h1>
         </Link>
 
         {/* Navigation Links */}
-        <nav className="hidden md:flex items-center gap-6 text-[15px] font-medium text-gray-700">
-          <Link 
-            href="/template-selection"
-            className={`hover:text-[#22C8A9] transition-colors flex items-center ${
-              pathname === '/template-selection' ? 'text-[#22C8A9]' : ''
-            }`}
-          >
-            Resume Templates
-          </Link>
+        <nav className="hidden md:flex items-center gap-5 text-[13px] font-medium text-gray-700">
           <Link 
             href="#"
             className="hover:text-[#22C8A9] transition-colors"
