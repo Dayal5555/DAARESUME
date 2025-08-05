@@ -811,10 +811,19 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                   onChange={(e) => setNameValue(e.target.value)}
                   onBlur={handleNameSave}
                   onKeyDown={handleNameKeyPress}
-                  className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic placeholder:font-normal placeholder:normal-case"
-                  placeholder="Your name"
+                  className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-transparent outline-none w-full z-10 focus:ring-0 focus:border-0"
+                  style={{
+                    background: 'transparent',
+                  }}
                   autoFocus
                 />
+                {/* Placeholder layer that shows when input is empty */}
+                {nameValue.trim() === '' && (
+                  <h1 className="absolute inset-0 text-3xl font-normal italic normal-case text-gray-400 font-poppins pointer-events-none z-5">
+                    Your name
+                  </h1>
+                )}
+                {/* Background size reference */}
                 <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
                   {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
                     `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
