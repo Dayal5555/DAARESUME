@@ -811,11 +811,15 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                   onChange={(e) => setNameValue(e.target.value)}
                   onBlur={handleNameSave}
                   onKeyDown={handleNameKeyPress}
-                  className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                  className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic placeholder:font-normal placeholder:normal-case"
+                  placeholder="Your name"
                   autoFocus
                 />
                 <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
-                  {finalDisplayData.personalInfo.firstName} {finalDisplayData.personalInfo.lastName}
+                  {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
+                    `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
+                    "Your name"
+                  }
                 </h1>
               </div>
             ) : (
@@ -823,7 +827,10 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 className={`text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                 onClick={handleNameClick}
               >
-                {finalDisplayData.personalInfo.firstName} {finalDisplayData.personalInfo.lastName}
+                {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
+                  `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
+                  (isEditable ? <span className="text-gray-400 italic font-normal normal-case">Your name</span> : "")
+                }
               </h1>
             )}
             {editingRole ? (
@@ -834,11 +841,12 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                   onChange={(e) => setRoleValue(e.target.value)}
                   onBlur={handleRoleSave}
                   onKeyDown={handleRoleKeyPress}
-                  className="absolute inset-0 text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                  className="absolute inset-0 text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic"
+                  placeholder="The role you are applying for?"
                   autoFocus
                 />
                 <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter opacity-0">
-                  {finalDisplayData.personalInfo.roleApplyingFor}
+                  {finalDisplayData.personalInfo.roleApplyingFor || "The role you are applying for?"}
                 </p>
               </div>
             ) : (
@@ -846,7 +854,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 className={`text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                 onClick={handleRoleClick}
               >
-                {finalDisplayData.personalInfo.roleApplyingFor}
+                {finalDisplayData.personalInfo.roleApplyingFor || (isEditable ? <span className="text-gray-400 italic">The role you are applying for?</span> : "")}
               </p>
             )}
             {editingContact ? (
