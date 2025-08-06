@@ -28,6 +28,8 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const [contactValue, setContactValue] = useState('');
   const [editingExperienceTitle, setEditingExperienceTitle] = useState<string | null>(null);
   const [experienceTitleValue, setExperienceTitleValue] = useState('');
+  const [editingExperienceCompany, setEditingExperienceCompany] = useState<string | null>(null);
+  const [experienceCompanyValue, setExperienceCompanyValue] = useState('');
   const [editingExperienceDates, setEditingExperienceDates] = useState<string | null>(null);
   const [experienceDatesValue, setExperienceDatesValue] = useState('');
   const [editingEducationDegree, setEditingEducationDegree] = useState<string | null>(null);
@@ -36,9 +38,9 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const [educationDatesValue, setEducationDatesValue] = useState('');
   const [editingEducationInstitution, setEditingEducationInstitution] = useState<string | null>(null);
   const [educationInstitutionValue, setEducationInstitutionValue] = useState('');
-    const [editingEducationDescription, setEditingEducationDescription] = useState<string | null>(null);
+  const [editingEducationDescription, setEditingEducationDescription] = useState<string | null>(null);
   const [educationDescriptionValue, setEducationDescriptionValue] = useState('');
-  
+
   // Add skill functionality
   const [isAddingSkill, setIsAddingSkill] = useState(false);
   const [newSkillValue, setNewSkillValue] = useState('');
@@ -244,13 +246,13 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
     }
   };
 
-    const handleSummarySave = () => {
+  const handleSummarySave = () => {
     if (isEditable && !useSampleData) {
       dispatch({
         type: 'UPDATE_PERSONAL_INFO',
         payload: { 
           ...personalInfo, // Keep all existing personal info
-          summary: summaryValue 
+          summary: summaryValue
         }
       });
     }
@@ -676,6 +678,10 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducation(null);
       setEditingRole(false);
       setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
+      setEditingExperienceCompany(null);
       setEditingExperienceDates(null);
       setEditingEducationDegree(null);
       setEditingEducationDates(null);
@@ -683,21 +689,18 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducationDescription(null);
       
       setEditingExperienceTitle(exp.id);
-      setExperienceTitleValue(`${exp.position}, ${exp.company}`);
+      setExperienceTitleValue(exp.position || '');
     }
   };
 
   const handleExperienceTitleSave = () => {
     if (isEditable && !useSampleData && editingExperienceTitle) {
-      const [position, company] = experienceTitleValue.split(', ');
-      
       dispatch({
         type: 'UPDATE_EXPERIENCE',
         payload: { 
           id: editingExperienceTitle, 
           data: { 
-            position: position || '',
-            company: company || ''
+            position: experienceTitleValue
           }
         }
       });
@@ -764,6 +767,53 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
     }
   };
 
+  // Experience company editing handlers
+  const handleExperienceCompanyClick = (exp: Experience) => {
+    if (isEditable) {
+      // Clear all other editing states
+      setEditingName(false);
+      setEditingSummary(false);
+      setEditingSkill(null);
+      setEditingExperience(null);
+      setEditingEducation(null);
+      setEditingRole(false);
+      setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
+      setEditingExperienceTitle(null);
+      setEditingExperienceDates(null);
+      setEditingEducationDegree(null);
+      setEditingEducationDates(null);
+      setEditingEducationInstitution(null);
+      setEditingEducationDescription(null);
+      
+      setEditingExperienceCompany(exp.id);
+      setExperienceCompanyValue(exp.company || '');
+    }
+  };
+
+  const handleExperienceCompanySave = () => {
+    if (isEditable && !useSampleData && editingExperienceCompany) {
+      dispatch({
+        type: 'UPDATE_EXPERIENCE',
+        payload: { 
+          id: editingExperienceCompany, 
+          data: { company: experienceCompanyValue }
+        }
+      });
+    }
+    setTimeout(() => setEditingExperienceCompany(null), 50);
+  };
+
+  const handleExperienceCompanyKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleExperienceCompanySave();
+    } else if (e.key === 'Escape') {
+      setEditingExperienceCompany(null);
+    }
+  };
+
   // Education degree editing handlers
   const handleEducationDegreeClick = (edu: Education) => {
     if (isEditable) {
@@ -775,7 +825,11 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducation(null);
       setEditingRole(false);
       setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
       setEditingExperienceTitle(null);
+      setEditingExperienceCompany(null);
       setEditingExperienceDates(null);
       setEditingEducationDegree(null);
       setEditingEducationDates(null);
@@ -819,7 +873,11 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducation(null);
       setEditingRole(false);
       setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
       setEditingExperienceTitle(null);
+      setEditingExperienceCompany(null);
       setEditingExperienceDates(null);
       setEditingEducationDegree(null);
       setEditingEducationInstitution(null);
@@ -870,7 +928,11 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducation(null);
       setEditingRole(false);
       setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
       setEditingExperienceTitle(null);
+      setEditingExperienceCompany(null);
       setEditingExperienceDates(null);
       setEditingEducationDegree(null);
       setEditingEducationDates(null);
@@ -914,7 +976,11 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducation(null);
       setEditingRole(false);
       setEditingContact(false);
+      setEditingEmail(false);
+      setEditingWebsite(false);
+      setEditingAddress(false);
       setEditingExperienceTitle(null);
+      setEditingExperienceCompany(null);
       setEditingExperienceDates(null);
       setEditingEducationDegree(null);
       setEditingEducationDates(null);
@@ -947,8 +1013,8 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   };
 
   return (
-    <div id="resume-content" className={`resume-template h-full w-full flex flex-col font-poppins ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : ''}`}>
-              <div className={`h-full w-full flex flex-col p-4 transition-colors duration-200 ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : 'bg-[#fefffc]'}`}>
+    <div id="resume-content" className={`resume-template h-full w-full flex flex-col font-poppins ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceCompany || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : ''}`}>
+              <div className={`h-full w-full flex flex-col p-4 transition-colors duration-200 ${editingName || editingSummary || editingSkill || editingExperience || editingEducation || editingRole || editingContact || editingAddress || editingEmail || editingWebsite || editingExperienceTitle || editingExperienceCompany || editingExperienceDates || editingEducationDegree || editingEducationDates || editingEducationInstitution || editingEducationDescription ? 'bg-gray-300' : 'bg-[#fefffc]'}`}>
         
         {/* Main Content */}
         <div className="flex-1 p-2">
@@ -1258,28 +1324,59 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 <div key={exp.id} className={index < finalDisplayData.experience.length - 1 ? "mb-4" : ""}>
                   <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
                     {editingExperienceTitle === exp.id ? (
-                      <div className="relative">
+                      <div className="relative inline-block">
                         <input
                           type="text"
                           value={experienceTitleValue}
                           onChange={(e) => setExperienceTitleValue(e.target.value)}
                           onBlur={handleExperienceTitleSave}
                           onKeyDown={handleExperienceTitleKeyPress}
-                          className="absolute inset-0 font-bold text-sm text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                          className="font-bold text-sm text-[#1e1e1e] font-poppins bg-white outline-none rounded shadow-lg focus:ring-0 focus:border-0 px-2 py-1 min-w-[150px]"
+                          style={{ width: Math.max(150, experienceTitleValue.length * 8 + 20) }}
+                          placeholder="Position Title"
                           autoFocus
                         />
-                        <h3 className="font-bold text-sm text-[#1e1e1e] font-poppins opacity-0">
-                          {exp.position}, Company{index + 1}
-                        </h3>
                       </div>
                     ) : (
                       <h3 
                         className={`font-bold text-sm text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                         onClick={() => handleExperienceTitleClick(exp)}
                       >
-                        {exp.position}, Company{index + 1}
+                        {exp.position || (isEditable ? <span className="text-gray-400 italic">Position Title</span> : "")}
                       </h3>
                     )}
+                  </div>
+                  {/* Company Name Field */}
+                  {editingExperienceCompany === exp.id ? (
+                    <div className="relative mb-2">
+                      <input
+                        type="text"
+                        value={experienceCompanyValue}
+                        onChange={(e) => setExperienceCompanyValue(e.target.value)}
+                        onBlur={handleExperienceCompanySave}
+                        onKeyDown={handleExperienceCompanyKeyPress}
+                        className="absolute inset-0 text-gray-600 text-sm font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                        placeholder="Company Name"
+                        autoFocus
+                      />
+                      {experienceCompanyValue.trim() === '' && (
+                        <p className="absolute inset-0 text-gray-400 italic text-sm font-inter pointer-events-none z-5 px-2 py-1">
+                          Company Name
+                        </p>
+                      )}
+                      <p className="text-gray-600 text-sm font-inter opacity-0">
+                        {exp.company || "Company Name"}
+                      </p>
+                    </div>
+                  ) : (
+                    <p 
+                      className={`text-gray-600 text-sm font-inter mb-2 ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                      onClick={() => handleExperienceCompanyClick(exp)}
+                    >
+                      {exp.company || (isEditable ? <span className="text-gray-400 italic">Company Name</span> : "")}
+                    </p>
+                  )}
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
                     {editingExperienceDates === exp.id ? (
                       <div className="relative">
                         <input
@@ -1288,11 +1385,17 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                           onChange={(e) => setExperienceDatesValue(e.target.value)}
                           onBlur={handleExperienceDatesSave}
                           onKeyDown={handleExperienceDatesKeyPress}
-                          className="absolute inset-0 font-semibold text-xs text-gray-600 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                          className="absolute inset-0 font-semibold text-xs text-gray-600 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                          placeholder="Start Date - End Date"
                           autoFocus
                         />
+                        {experienceDatesValue.trim() === '' && (
+                          <p className="absolute inset-0 font-semibold text-xs text-gray-400 italic font-inter pointer-events-none z-5 px-2 py-1">
+                            Start Date - End Date
+                          </p>
+                        )}
                         <p className="font-semibold text-xs text-gray-600 font-inter opacity-0">
-                          {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                          {(exp.startDate || exp.endDate) ? `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}` : "Start Date - End Date"}
                         </p>
                       </div>
                     ) : (
@@ -1300,7 +1403,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         className={`font-semibold text-xs text-gray-600 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                         onClick={() => handleExperienceDatesClick(exp)}
                       >
-                        {exp.startDate} - {exp.current ? 'Present' : exp.endDate}
+                        {(exp.startDate || exp.endDate) ? `${exp.startDate} - ${exp.current ? 'Present' : exp.endDate}` : (isEditable ? <span className="text-gray-400 italic">Start Date - End Date</span> : "")}
                       </p>
                     )}
                   </div>
@@ -1311,25 +1414,18 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         onChange={(e) => setExperienceValue(e.target.value)}
                         onBlur={handleExperienceSave}
                         onKeyDown={handleExperienceKeyPress}
-                        className="absolute inset-0 text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium w-full rounded-md bg-white shadow-lg z-10 focus:ring-0 focus:border-0 resize-none"
-                        style={{ minHeight: 'auto', height: 'auto' }}
-                        rows={1}
-                        onInput={(e) => {
-                          const target = e.target as HTMLTextAreaElement;
-                          target.style.height = 'auto';
-                          target.style.height = target.scrollHeight + 'px';
-                        }}
+                        className="text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium w-full rounded-md bg-white shadow-lg focus:ring-0 focus:border-0 resize-none px-2 py-1 border border-gray-200"
+                        placeholder="Job description and responsibilities..."
+                        rows={3}
+                        autoFocus
                       />
-                      <p className="text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium opacity-0">
-                        {exp.description}
-                      </p>
                     </div>
                   ) : (
                     <p 
                       className={`text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                       onClick={() => handleExperienceClick(exp)}
                     >
-                      {exp.description}
+                      {exp.description || (isEditable ? <span className="text-gray-400 italic">Job description and responsibilities...</span> : "")}
                     </p>
                   )}
                 </div>
@@ -1338,11 +1434,141 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 <div className="text-gray-400 italic text-sm">
                   <div className="mb-4">
                     <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
-                      <h3 className="font-bold text-sm text-gray-400 font-poppins italic">Position Title</h3>
-                      <p className="font-semibold text-xs text-gray-400 font-inter italic">Start Date - End Date</p>
+                      <h3 
+                        className={`font-bold text-sm text-gray-400 font-poppins italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                        onClick={() => {
+                          if (isEditable) {
+                            // If no experience exists, create one
+                            if (finalDisplayData.experience.length === 0) {
+                              const newExperience = {
+                                id: Date.now().toString(),
+                                company: '',
+                                position: '',
+                                location: '',
+                                startDate: '',
+                                endDate: '',
+                                current: false,
+                                description: ''
+                              };
+                              dispatch({
+                                type: 'ADD_EXPERIENCE',
+                                payload: newExperience
+                              });
+                              // Set editing state for position
+                              setEditingExperienceTitle(newExperience.id);
+                              setExperienceTitleValue('');
+                            } else {
+                              // Edit the first existing experience
+                              const firstExp = finalDisplayData.experience[0];
+                              setEditingExperienceTitle(firstExp.id);
+                              setExperienceTitleValue(firstExp.position || '');
+                            }
+                          }
+                        }}
+                      >
+                        Position Title
+                      </h3>
+                      <p 
+                        className={`font-semibold text-xs text-gray-400 font-inter italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                        onClick={() => {
+                          if (isEditable) {
+                            // If no experience exists, create one
+                            if (finalDisplayData.experience.length === 0) {
+                              const newExperience = {
+                                id: Date.now().toString(),
+                                company: '',
+                                position: '',
+                                location: '',
+                                startDate: '',
+                                endDate: '',
+                                current: false,
+                                description: ''
+                              };
+                              dispatch({
+                                type: 'ADD_EXPERIENCE',
+                                payload: newExperience
+                              });
+                              // Set editing state for dates
+                              setEditingExperienceDates(newExperience.id);
+                              setExperienceDatesValue('');
+                            } else {
+                              // Edit the first existing experience
+                              const firstExp = finalDisplayData.experience[0];
+                              setEditingExperienceDates(firstExp.id);
+                              setExperienceDatesValue(`${firstExp.startDate} - ${firstExp.current ? 'Present' : firstExp.endDate}`);
+                            }
+                          }
+                        }}
+                      >
+                        Start Date - End Date
+                      </p>
                     </div>
-                    <p className="text-gray-400 italic text-sm">Company Name</p>
-                    <p className="text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium text-gray-400 italic">
+                    <p 
+                      className={`text-gray-600 text-sm font-inter text-gray-400 italic mb-2 ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                      onClick={() => {
+                        if (isEditable) {
+                          // If no experience exists, create one
+                          if (finalDisplayData.experience.length === 0) {
+                            const newExperience = {
+                              id: Date.now().toString(),
+                              company: '',
+                              position: '',
+                              location: '',
+                              startDate: '',
+                              endDate: '',
+                              current: false,
+                              description: ''
+                            };
+                            dispatch({
+                              type: 'ADD_EXPERIENCE',
+                              payload: newExperience
+                            });
+                            // Set editing state for company
+                            setEditingExperienceCompany(newExperience.id);
+                            setExperienceCompanyValue('');
+                          } else {
+                            // Edit the first existing experience
+                            const firstExp = finalDisplayData.experience[0];
+                            setEditingExperienceCompany(firstExp.id);
+                            setExperienceCompanyValue(firstExp.company || '');
+                          }
+                        }
+                      }}
+                    >
+                      Company Name
+                    </p>
+                    <p 
+                      className={`text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium text-gray-400 italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                      onClick={() => {
+                        if (isEditable) {
+                          // If no experience exists, create one
+                          if (finalDisplayData.experience.length === 0) {
+                            const newExperience = {
+                              id: Date.now().toString(),
+                              company: '',
+                              position: '',
+                              location: '',
+                              startDate: '',
+                              endDate: '',
+                              current: false,
+                              description: ''
+                            };
+                            dispatch({
+                              type: 'ADD_EXPERIENCE',
+                              payload: newExperience
+                            });
+                            // Set editing state for description
+                            setEditingExperience(newExperience.id);
+                            setExperienceValue('');
+                          } else {
+                            // Edit the first existing experience
+                            const firstExp = finalDisplayData.experience[0];
+                            setEditingExperience(firstExp.id);
+                            setExperienceValue(firstExp.description || '');
+                          }
+                        }
+                      }}
+                    >
                       Job description and responsibilities...
                     </p>
                   </div>
@@ -1370,11 +1596,17 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                           onChange={(e) => setEducationDegreeValue(e.target.value)}
                           onBlur={handleEducationDegreeSave}
                           onKeyDown={handleEducationDegreeKeyPress}
-                          className="absolute inset-0 font-bold text-sm text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                          className="absolute inset-0 font-bold text-sm text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                          placeholder="Degree and Field of Study"
                           autoFocus
                         />
+                        {educationDegreeValue.trim() === '' && (
+                          <h3 className="absolute inset-0 font-bold text-sm text-gray-400 italic font-poppins pointer-events-none z-5 px-2 py-1">
+                            Degree and Field of Study
+                          </h3>
+                        )}
                         <h3 className="font-bold text-sm text-[#1e1e1e] font-poppins opacity-0">
-                          {edu.degree}
+                          {edu.degree || "Degree and Field of Study"}
                         </h3>
                       </div>
                     ) : (
@@ -1382,7 +1614,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         className={`font-bold text-sm text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                         onClick={() => handleEducationDegreeClick(edu)}
                       >
-                        {edu.degree}
+                        {edu.degree || (isEditable ? <span className="text-gray-400 italic">Degree and Field of Study</span> : "")}
                       </h3>
                     )}
                     {editingEducationDates === edu.id ? (
@@ -1393,11 +1625,17 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                           onChange={(e) => setEducationDatesValue(e.target.value)}
                           onBlur={handleEducationDatesSave}
                           onKeyDown={handleEducationDatesKeyPress}
-                          className="absolute inset-0 font-semibold text-xs text-gray-600 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                          className="absolute inset-0 font-semibold text-xs text-gray-600 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                          placeholder="Start Date - End Date"
                           autoFocus
                         />
+                        {educationDatesValue.trim() === '' && (
+                          <p className="absolute inset-0 font-semibold text-xs text-gray-400 italic font-inter pointer-events-none z-5 px-2 py-1">
+                            Start Date - End Date
+                          </p>
+                        )}
                         <p className="font-semibold text-xs text-gray-600 font-inter opacity-0">
-                          {edu.startDate} - {edu.current ? 'Present' : edu.endDate}
+                          {(edu.startDate || edu.endDate) ? `${edu.startDate} - ${edu.current ? 'Present' : edu.endDate}` : "Start Date - End Date"}
                         </p>
                       </div>
                     ) : (
@@ -1405,7 +1643,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         className={`font-semibold text-xs text-gray-600 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                         onClick={() => handleEducationDatesClick(edu)}
                       >
-                        {edu.startDate} - {edu.current ? 'Present' : edu.endDate}
+                        {(edu.startDate || edu.endDate) ? `${edu.startDate} - ${edu.current ? 'Present' : edu.endDate}` : (isEditable ? <span className="text-gray-400 italic">Start Date - End Date</span> : "")}
                       </p>
                     )}
                   </div>
@@ -1417,11 +1655,17 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         onChange={(e) => setEducationInstitutionValue(e.target.value)}
                         onBlur={handleEducationInstitutionSave}
                         onKeyDown={handleEducationInstitutionKeyPress}
-                        className="absolute inset-0 text-gray-800 font-medium text-sm font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                        className="absolute inset-0 text-gray-800 font-medium text-sm font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                        placeholder="College and University Name"
                         autoFocus
                       />
+                      {educationInstitutionValue.trim() === '' && (
+                        <p className="absolute inset-0 text-gray-400 italic font-medium text-sm font-inter pointer-events-none z-5 px-2 py-1">
+                          College and University Name
+                        </p>
+                      )}
                       <p className="text-gray-800 font-medium text-sm font-inter opacity-0">
-                        {edu.institution}
+                        {edu.institution || "College and University Name"}
                       </p>
                     </div>
                   ) : (
@@ -1429,7 +1673,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                       className={`text-gray-800 font-medium text-sm font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                       onClick={() => handleEducationInstitutionClick(edu)}
                     >
-                      {edu.institution}
+                      {edu.institution || (isEditable ? <span className="text-gray-400 italic">College and University Name</span> : "")}
                     </p>
                   )}
                   {edu.description && (
@@ -1441,13 +1685,11 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                             onChange={(e) => setEducationDescriptionValue(e.target.value)}
                             onBlur={handleEducationDescriptionSave}
                             onKeyDown={handleEducationDescriptionKeyPress}
-                            className="absolute inset-0 text-gray-700 text-sm font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 resize-none"
+                            className="text-gray-700 text-sm font-inter bg-white outline-none w-full rounded shadow-lg focus:ring-0 focus:border-0 resize-none px-2 py-1 border border-gray-200"
+                            placeholder="Education description..."
                             rows={2}
                             autoFocus
                           />
-                          <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm font-inter opacity-0">
-                            <li>{edu.description}</li>
-                          </ul>
                         </div>
                       ) : (
                         <ul className="list-disc list-inside text-gray-700 space-y-1 text-sm font-inter">
@@ -1455,7 +1697,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                             className={`${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                             onClick={() => handleEducationDescriptionClick(edu)}
                           >
-                            {edu.description}
+                            {edu.description || (isEditable ? <span className="text-gray-400 italic">Education description...</span> : "")}
                           </li>
                         </ul>
                       )}
@@ -1467,10 +1709,115 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 <div className="text-gray-400 italic text-sm">
                   <div>
                     <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
-                      <h3 className="font-bold text-sm text-gray-400 font-poppins italic">Degree and Field of Study</h3>
-                      <p className="font-semibold text-xs text-gray-400 font-inter italic">Start Date - End Date</p>
+                      <h3 
+                        className={`font-bold text-sm text-gray-400 font-poppins italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                        onClick={() => {
+                          if (isEditable) {
+                            // If no education exists, create one
+                            if (finalDisplayData.education.length === 0) {
+                              const newEducation = {
+                                id: Date.now().toString(),
+                                institution: '',
+                                degree: '',
+                                field: '',
+                                location: '',
+                                startDate: '',
+                                endDate: '',
+                                current: false,
+                                gpa: '',
+                                description: ''
+                              };
+                              dispatch({
+                                type: 'ADD_EDUCATION',
+                                payload: newEducation
+                              });
+                              // Set editing state for degree
+                              setEditingEducationDegree(newEducation.id);
+                              setEducationDegreeValue('');
+                            } else {
+                              // Edit the first existing education
+                              const firstEdu = finalDisplayData.education[0];
+                              setEditingEducationDegree(firstEdu.id);
+                              setEducationDegreeValue(firstEdu.degree || '');
+                            }
+                          }
+                        }}
+                      >
+                        Degree and Field of Study
+                      </h3>
+                      <p 
+                        className={`font-semibold text-xs text-gray-400 font-inter italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                        onClick={() => {
+                          if (isEditable) {
+                            // If no education exists, create one
+                            if (finalDisplayData.education.length === 0) {
+                              const newEducation = {
+                                id: Date.now().toString(),
+                                institution: '',
+                                degree: '',
+                                field: '',
+                                location: '',
+                                startDate: '',
+                                endDate: '',
+                                current: false,
+                                gpa: '',
+                                description: ''
+                              };
+                              dispatch({
+                                type: 'ADD_EDUCATION',
+                                payload: newEducation
+                              });
+                              // Set editing state for dates
+                              setEditingEducationDates(newEducation.id);
+                              setEducationDatesValue('');
+                            } else {
+                              // Edit the first existing education
+                              const firstEdu = finalDisplayData.education[0];
+                              setEditingEducationDates(firstEdu.id);
+                              setEducationDatesValue(`${firstEdu.startDate} - ${firstEdu.current ? 'Present' : firstEdu.endDate}`);
+                            }
+                          }
+                        }}
+                      >
+                        Start Date - End Date
+                      </p>
                     </div>
-                    <p className="text-gray-800 font-medium text-sm font-inter text-gray-400 italic">College and University Name</p>
+                    <p 
+                      className={`text-gray-800 font-medium text-sm font-inter text-gray-400 italic ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                      onClick={() => {
+                        if (isEditable) {
+                          // If no education exists, create one
+                          if (finalDisplayData.education.length === 0) {
+                            const newEducation = {
+                              id: Date.now().toString(),
+                              institution: '',
+                              degree: '',
+                              field: '',
+                              location: '',
+                              startDate: '',
+                              endDate: '',
+                              current: false,
+                              gpa: '',
+                              description: ''
+                            };
+                            dispatch({
+                              type: 'ADD_EDUCATION',
+                              payload: newEducation
+                            });
+                            // Set editing state for institution
+                            setEditingEducationInstitution(newEducation.id);
+                            setEducationInstitutionValue('');
+                          } else {
+                            // Edit the first existing education
+                            const firstEdu = finalDisplayData.education[0];
+                            setEditingEducationInstitution(firstEdu.id);
+                            setEducationInstitutionValue(firstEdu.institution || '');
+                          }
+                        }
+                      }}
+                    >
+                      College and University Name
+                    </p>
                   </div>
                 </div>
               )}
