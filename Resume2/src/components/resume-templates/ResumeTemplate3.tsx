@@ -1336,7 +1336,16 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
               ))
               ) : (
                 <div className="text-gray-400 italic text-sm">
-                  • Company 1
+                  <div className="mb-4">
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
+                      <h3 className="font-bold text-sm text-gray-400 font-poppins italic">Position Title</h3>
+                      <p className="font-semibold text-xs text-gray-400 font-inter italic">Start Date - End Date</p>
+                    </div>
+                    <p className="text-gray-400 italic text-sm">Company Name</p>
+                    <p className="text-gray-700 text-justify leading-relaxed text-sm font-inter font-medium text-gray-400 italic">
+                      Job description and responsibilities...
+                    </p>
+                  </div>
                 </div>
               )}
             </section>
@@ -1456,7 +1465,13 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
               ))
               ) : (
                 <div className="text-gray-400 italic text-sm">
-                  • College and university name
+                  <div>
+                    <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
+                      <h3 className="font-bold text-sm text-gray-400 font-poppins italic">Degree and Field of Study</h3>
+                      <p className="font-semibold text-xs text-gray-400 font-inter italic">Start Date - End Date</p>
+                    </div>
+                    <p className="text-gray-800 font-medium text-sm font-inter text-gray-400 italic">College and University Name</p>
+                  </div>
                 </div>
               )}
             </section>
