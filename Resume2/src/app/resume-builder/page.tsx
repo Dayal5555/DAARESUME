@@ -4,9 +4,11 @@ import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ResumeTemplate3 from '@/components/resume-templates/ResumeTemplate3';
 import { ResumeProvider } from '@/context/ResumeContext';
+import JDModal from '@/components/JDModal';
 
 export default function ResumeBuilderPage() {
   const [activeSection, setActiveSection] = useState('improve-text');
+  const [isJDModalOpen, setIsJDModalOpen] = useState(false);
   const searchParams = useSearchParams();
   
   // Get template information from URL parameters
@@ -24,8 +26,8 @@ export default function ResumeBuilderPage() {
     <ResumeProvider>
     <div className="flex items-start justify-center min-h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white p-4 shadow-lg sticky top-0 h-screen">
-        <div className="flex items-center justify-end mb-2 h-6">
+      <aside className="bg-white shadow-lg mt-10 ml-5 px-3 py-3 text-xs rounded-xl">
+        <div className="flex items-center justify-end mb-2">
         </div>
           
           {/* Template Indicator */}
@@ -43,92 +45,45 @@ export default function ResumeBuilderPage() {
           
         <nav>
           <ul>
+            
             <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
-                <span className="material-icons mr-3">person</span>
-                Personal Information
-              </a>
-            </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
+              <a className="flex text-xs items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
                 <span className="material-icons mr-3">add</span>
                 Add section
               </a>
             </li>
             <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
+              <button 
+                onClick={() => setIsJDModalOpen(true)}
+                className="flex text-xs items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg w-full text-left"
+              >
+                <span className="material-icons mr-3">add</span>
+                Input JD
+              </button>
+            </li>
+            <li className="mb-4">
+              <a className="flex text-xs items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
                 <span className="material-icons mr-3">reorder</span>
                 Rearrange
               </a>
             </li>
             <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
+              <a className="flex text-xs items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
                 <span className="material-icons mr-3">article</span>
                 Templates
               </a>
             </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
-                <span className="material-icons mr-3">palette</span>
-                Design & Font
-              </a>
-            </li>
-            <li className="mb-4">
-              <a className={`flex items-center p-2 rounded-lg ${
-                activeSection === 'improve-text' 
-                  ? 'bg-gray-100 text-blue-600' 
-                  : 'text-gray-700 hover:text-blue-600 hover:bg-gray-100'
-              }`} href="#">
-                <span className="material-icons mr-3">text_fields</span>
-                Improve text
-              </a>
-            </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
-                <span className="material-icons mr-3">check_circle_outline</span>
-                Checker
-              </a>
-            </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
+            
+           
+            <li className="">
+              <a className="flex text-xs items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
                 <span className="material-icons mr-3">download</span>
                 Download
               </a>
             </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
-                <span className="material-icons mr-3">share</span>
-                Share
-              </a>
-            </li>
-            <li className="mb-4">
-              <a className="flex items-center text-gray-700 hover:text-blue-600 hover:bg-gray-100 p-2 rounded-lg" href="#">
-                <span className="material-icons mr-3">history</span>
-                History
-              </a>
-            </li>
+           
           </ul>
         </nav>
-        
-        {/* Branding Toggle */}
-        <div className="mt-auto absolute bottom-4 w-56">
-          <div className="flex items-center justify-between p-2 rounded-lg hover:bg-gray-100">
-            <div className="flex items-center">
-              <span className="material-icons text-gray-700 mr-3">local_offer</span>
-              <span className="text-gray-700">Branding</span>
-            </div>
-            <div className="relative inline-block w-10 mr-2 align-middle select-none transition duration-200 ease-in">
-              <input 
-                defaultChecked 
-                className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer" 
-                id="toggle" 
-                name="toggle" 
-                type="checkbox"
-              />
-              <label className="toggle-label block overflow-hidden h-6 rounded-full bg-green-400 cursor-pointer" htmlFor="toggle"></label>
-            </div>
-          </div>
-        </div>
       </aside>
 
         {/* Main Content - Resume Template */}
@@ -137,6 +92,12 @@ export default function ResumeBuilderPage() {
             {renderTemplate()}
           </div>
       </main>
+      
+      {/* JD Modal */}
+      <JDModal 
+        isOpen={isJDModalOpen} 
+        onClose={() => setIsJDModalOpen(false)} 
+      />
     </div>
     </ResumeProvider>
   );
