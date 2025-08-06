@@ -1,6 +1,12 @@
 'use client';
 
-import React, { createContext, useContext, useReducer, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  useState,
+} from 'react';
 
 // Types for resume data
 export interface PersonalInfo {
@@ -80,10 +86,16 @@ const initialState: ResumeData = {
 type ResumeAction =
   | { type: 'UPDATE_PERSONAL_INFO'; payload: Partial<PersonalInfo> }
   | { type: 'ADD_EXPERIENCE'; payload: Experience }
-  | { type: 'UPDATE_EXPERIENCE'; payload: { id: string; data: Partial<Experience> } }
+  | {
+      type: 'UPDATE_EXPERIENCE';
+      payload: { id: string; data: Partial<Experience> };
+    }
   | { type: 'DELETE_EXPERIENCE'; payload: string }
   | { type: 'ADD_EDUCATION'; payload: Education }
-  | { type: 'UPDATE_EDUCATION'; payload: { id: string; data: Partial<Education> } }
+  | {
+      type: 'UPDATE_EDUCATION';
+      payload: { id: string; data: Partial<Education> };
+    }
   | { type: 'DELETE_EDUCATION'; payload: string }
   | { type: 'ADD_SKILL'; payload: Skill }
   | { type: 'UPDATE_SKILL'; payload: { id: string; data: Partial<Skill> } }
@@ -206,7 +218,9 @@ interface ResumeContextType {
 const ResumeContext = createContext<ResumeContextType | undefined>(undefined);
 
 // Provider component
-export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const [state, dispatch] = useReducer(resumeReducer, initialState);
   const [idCounter, setIdCounter] = useState<number>(200);
 
@@ -217,11 +231,15 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       if (savedData) {
         const parsedData = JSON.parse(savedData);
         dispatch({ type: 'LOAD_DATA', payload: parsedData });
-        
+
         // Set counter to max ID + 1 to avoid conflicts
         const maxId = Math.max(
-          ...parsedData.experience.map((exp: Experience) => parseInt(exp.id) || 0),
-          ...parsedData.education.map((edu: Education) => parseInt(edu.id) || 0),
+          ...parsedData.experience.map(
+            (exp: Experience) => parseInt(exp.id) || 0
+          ),
+          ...parsedData.education.map(
+            (edu: Education) => parseInt(edu.id) || 0
+          ),
           ...parsedData.skills.map((skill: Skill) => parseInt(skill.id) || 0),
           200 // Start from 200 to avoid conflicts with initial data
         );
@@ -324,9 +342,7 @@ export const ResumeProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   };
 
   return (
-    <ResumeContext.Provider value={value}>
-      {children}
-    </ResumeContext.Provider>
+    <ResumeContext.Provider value={value}>{children}</ResumeContext.Provider>
   );
 };
 
@@ -337,4 +353,4 @@ export const useResume = (): ResumeContextType => {
     throw new Error('useResume must be used within a ResumeProvider');
   }
   return context;
-}; 
+};

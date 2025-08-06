@@ -11,7 +11,10 @@ import Skills from './Skills';
 import { useResume } from '../context/ResumeContext';
 import { RESUME_SECTIONS } from '@/constants/routes';
 
-import resumeTemplates, { defaultTemplate, TemplateKey } from './resume-templates';
+import resumeTemplates, {
+  defaultTemplate,
+  TemplateKey,
+} from './resume-templates';
 
 type TemplateId = keyof typeof resumeTemplates;
 
@@ -20,8 +23,11 @@ interface ResumeCraftProps {
 }
 
 const ResumeCraft: React.FC<ResumeCraftProps> = ({ initialTemplate }) => {
-  const [activeSection, setActiveSection] = useState<string>(RESUME_SECTIONS.PERSONAL_INFO);
-  const [currentTemplate, setCurrentTemplate] = useState<TemplateId>(defaultTemplate);
+  const [activeSection, setActiveSection] = useState<string>(
+    RESUME_SECTIONS.PERSONAL_INFO
+  );
+  const [currentTemplate, setCurrentTemplate] =
+    useState<TemplateId>(defaultTemplate);
   const router = useRouter();
   const searchParams = useSearchParams();
   const { state } = useResume();
@@ -31,7 +37,7 @@ const ResumeCraft: React.FC<ResumeCraftProps> = ({ initialTemplate }) => {
     const templateFromUrl = searchParams.get('template');
     const sectionFromUrl = searchParams.get('section');
     const templateToUse = templateFromUrl || initialTemplate;
-    
+
     if (templateToUse && templateToUse in resumeTemplates) {
       setCurrentTemplate(templateToUse as TemplateId);
     }
@@ -109,9 +115,16 @@ const ResumeCraft: React.FC<ResumeCraftProps> = ({ initialTemplate }) => {
   const calculateProgress = () => {
     // Check if personal info is completed
     const { personalInfo } = state;
-    const requiredPersonalFields = ['firstName', 'lastName', 'email', 'city', 'roleApplyingFor', 'summary'];
-    const personalInfoComplete = requiredPersonalFields.every(field => 
-      personalInfo[field as keyof typeof personalInfo]?.trim() !== ''
+    const requiredPersonalFields = [
+      'firstName',
+      'lastName',
+      'email',
+      'city',
+      'roleApplyingFor',
+      'summary',
+    ];
+    const personalInfoComplete = requiredPersonalFields.every(
+      field => personalInfo[field as keyof typeof personalInfo]?.trim() !== ''
     );
 
     // Check if experience is completed
@@ -135,60 +148,81 @@ const ResumeCraft: React.FC<ResumeCraftProps> = ({ initialTemplate }) => {
   const renderContent = () => {
     switch (activeSection) {
       case RESUME_SECTIONS.PERSONAL_INFO:
-        return <PersonalInfo onComplete={() => handleSectionNavigation(RESUME_SECTIONS.EXPERIENCE)} />;
+        return (
+          <PersonalInfo
+            onComplete={() =>
+              handleSectionNavigation(RESUME_SECTIONS.EXPERIENCE)
+            }
+          />
+        );
       case RESUME_SECTIONS.EXPERIENCE:
-        return <Experience 
-          onComplete={() => handleSectionNavigation(RESUME_SECTIONS.EDUCATION)} 
-          onBack={() => handleBackNavigation(RESUME_SECTIONS.EXPERIENCE)}
-        />;
+        return (
+          <Experience
+            onComplete={() =>
+              handleSectionNavigation(RESUME_SECTIONS.EDUCATION)
+            }
+            onBack={() => handleBackNavigation(RESUME_SECTIONS.EXPERIENCE)}
+          />
+        );
       case RESUME_SECTIONS.EDUCATION:
-        return <Education 
-          onComplete={() => handleSectionNavigation(RESUME_SECTIONS.SKILLS)} 
-          onBack={() => handleBackNavigation(RESUME_SECTIONS.EDUCATION)}
-        />;
+        return (
+          <Education
+            onComplete={() => handleSectionNavigation(RESUME_SECTIONS.SKILLS)}
+            onBack={() => handleBackNavigation(RESUME_SECTIONS.EDUCATION)}
+          />
+        );
       case RESUME_SECTIONS.SKILLS:
-        return <Skills 
-          onComplete={() => setActiveSection(RESUME_SECTIONS.PREVIEW)} 
-          onBack={() => handleBackNavigation(RESUME_SECTIONS.SKILLS)}
-        />;
+        return (
+          <Skills
+            onComplete={() => setActiveSection(RESUME_SECTIONS.PREVIEW)}
+            onBack={() => handleBackNavigation(RESUME_SECTIONS.SKILLS)}
+          />
+        );
       default:
-        return <ResumePreview 
-          templateId={currentTemplate} 
-          onBack={() => handleBackNavigation(RESUME_SECTIONS.PREVIEW)}
-        />;
+        return (
+          <ResumePreview
+            templateId={currentTemplate}
+            onBack={() => handleBackNavigation(RESUME_SECTIONS.PREVIEW)}
+          />
+        );
     }
   };
 
   return (
-    <div className="relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden" style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}>
-      <div className="layout-container flex h-full grow flex-col">
+    <div
+      className='relative flex size-full min-h-screen flex-col bg-slate-50 group/design-root overflow-x-hidden'
+      style={{ fontFamily: 'Manrope, "Noto Sans", sans-serif' }}
+    >
+      <div className='layout-container flex h-full grow flex-col'>
         {/* Progress Indicator */}
-        <div className="px-6 py-4 bg-white border-b border-gray-200">
-          <div className="max-w-[960px] mx-auto">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-600">
+        <div className='px-6 py-4 bg-white border-b border-gray-200'>
+          <div className='max-w-[960px] mx-auto'>
+            <div className='flex items-center justify-between mb-2'>
+              <span className='text-sm font-medium text-gray-600'>
                 Step {getCurrentStep()} of 5: {getStepLabel(getCurrentStep())}
               </span>
-              <span className="text-sm text-gray-500">
+              <span className='text-sm text-gray-500'>
                 {calculateProgress()}% Complete
               </span>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+            <div className='w-full bg-gray-200 rounded-full h-2'>
+              <div
+                className='bg-blue-500 h-2 rounded-full transition-all duration-300'
                 style={{ width: `${calculateProgress()}%` }}
               ></div>
             </div>
           </div>
         </div>
-        
-        <div className="gap-1 px-6 flex flex-1 justify-center">
-          <Sidebar 
-            onSectionClick={handleSectionClick} 
+
+        <div className='gap-1 px-6 flex flex-1 justify-center'>
+          <Sidebar
+            onSectionClick={handleSectionClick}
             activeSection={activeSection}
             canNavigateToSection={() => true}
             currentTemplate={currentTemplate}
-            onTemplateChange={(template) => setCurrentTemplate(template as TemplateId)}
+            onTemplateChange={template =>
+              setCurrentTemplate(template as TemplateId)
+            }
           />
           {renderContent()}
         </div>

@@ -3,13 +3,15 @@
 import React, { useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import ResumeTemplate3 from '@/components/resume-templates/ResumeTemplate3';
-import { ResumeProvider } from '@/context/ResumeContext';
+import { ResumeProvider, useResume } from '@/context/ResumeContext';
 import JDModal from '@/components/JDModal';
 
-export default function ResumeBuilderPage() {
+function ResumeBuilderContent() {
   const [activeSection, setActiveSection] = useState('improve-text');
   const [isJDModalOpen, setIsJDModalOpen] = useState(false);
   const searchParams = useSearchParams();
+  const { state } = useResume();
+  const { personalInfo } = state;
   
   // Get template information from URL parameters
   const templateId = searchParams.get('templateId');
@@ -96,9 +98,49 @@ export default function ResumeBuilderPage() {
       {/* JD Modal */}
       <JDModal 
         isOpen={isJDModalOpen} 
-        onClose={() => setIsJDModalOpen(false)} 
+        onClose={() => setIsJDModalOpen(false)}
+        validateRequiredFields={() => {
+          const missingFields = [];
+          
+          // Get the latest state from localStorage to ensure we have the most recent data
+          let currentPersonalInfo = personalInfo;
+          try {
+            const savedData = localStorage.getItem('resumeData');
+            if (savedData) {
+              const parsedData = JSON.parse(savedData);
+              currentPersonalInfo = parsedData.personalInfo;
+            }
+          } catch (error) {
+            console.error('Error reading from localStorage:', error);
+          }
+          
+          console.log('Validating position field:', {
+            roleApplyingFor: currentPersonalInfo.roleApplyingFor,
+            trimmed: currentPersonalInfo.roleApplyingFor?.trim(),
+            isEmpty: !currentPersonalInfo.roleApplyingFor?.trim(),
+            fromState: personalInfo.roleApplyingFor,
+            fromLocalStorage: currentPersonalInfo.roleApplyingFor
+          });
+          
+          if (!currentPersonalInfo.roleApplyingFor?.trim()) {
+            missingFields.push('• Position you are applying for');
+          }
+          
+          return {
+            isValid: missingFields.length === 0,
+            missingFields
+          };
+        }}
       />
     </div>
+    </ResumeProvider>
+  );
+}
+
+export default function ResumeBuilderPage() {
+  return (
+    <ResumeProvider>
+      <ResumeBuilderContent />
     </ResumeProvider>
   );
 } 

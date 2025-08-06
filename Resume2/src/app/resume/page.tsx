@@ -7,4 +7,4 @@ interface ResumePageProps {
 export default async function ResumePage({ searchParams }: ResumePageProps) {
   const params = await searchParams;
   return <ResumeCraft initialTemplate={params.template} />;
-} 
+}

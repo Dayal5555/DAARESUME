@@ -26,4 +26,4 @@
   },
   "include": ["src/**/*", "src/db.ts"],
   "exclude": ["node_modules", "dist"]
-} 
+}

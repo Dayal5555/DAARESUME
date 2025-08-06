@@ -17,4 +17,4 @@ export const RESUME_SECTIONS = {
 
 export const getResumeUrl = (section?: string) => {
   return section ? `${ROUTES.RESUME}?section=${section}` : ROUTES.RESUME;
-}; 
+};

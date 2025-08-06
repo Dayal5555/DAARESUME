@@ -36,8 +36,12 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const [educationDatesValue, setEducationDatesValue] = useState('');
   const [editingEducationInstitution, setEditingEducationInstitution] = useState<string | null>(null);
   const [educationInstitutionValue, setEducationInstitutionValue] = useState('');
-  const [editingEducationDescription, setEditingEducationDescription] = useState<string | null>(null);
+    const [editingEducationDescription, setEditingEducationDescription] = useState<string | null>(null);
   const [educationDescriptionValue, setEducationDescriptionValue] = useState('');
+  
+  // Add skill functionality
+  const [isAddingSkill, setIsAddingSkill] = useState(false);
+  const [newSkillValue, setNewSkillValue] = useState('');
   
   // Individual contact field editing states
   const [editingAddress, setEditingAddress] = useState(false);
@@ -69,7 +73,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       city: 'Any City',
       state: 'NY',
       zipCode: '10001',
-      summary: '',
+      summary: 'Experienced Process Engineer with expertise in automation systems, manufacturing processes, and preventive maintenance strategies. Proven track record of increasing operational efficiency and reducing costs.',
       roleApplyingFor: 'PROCESS ENGINEER',
       website: 'www.reallygreatsite.com',
     },
@@ -123,6 +127,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const hasUserData = (personalInfo.firstName && personalInfo.firstName.trim() !== '') || 
                      (personalInfo.lastName && personalInfo.lastName.trim() !== '') ||
                      (personalInfo.email && personalInfo.email.trim() !== '') || 
+                     (personalInfo.summary && personalInfo.summary.trim() !== '') ||
                      experience.length > 0 || education.length > 0 || skills.length > 0;
   
   // Always use user data if it exists, otherwise use sample data
@@ -344,6 +349,35 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       handleSkillSave();
     } else if (e.key === 'Escape') {
       setEditingSkill(null);
+    }
+  };
+
+  const handleAddSkillClick = () => {
+    setIsAddingSkill(true);
+    setNewSkillValue('');
+  };
+
+  const handleAddSkillSave = () => {
+    if (newSkillValue.trim()) {
+      dispatch({
+        type: 'ADD_SKILL',
+        payload: {
+          id: Date.now().toString(), // Generate a temporary ID
+          name: newSkillValue.trim(),
+          level: 'Advanced'
+        }
+      });
+    }
+    setIsAddingSkill(false);
+    setNewSkillValue('');
+  };
+
+  const handleAddSkillKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleAddSkillSave();
+    } else if (e.key === 'Escape') {
+      setIsAddingSkill(false);
+      setNewSkillValue('');
     }
   };
 
@@ -959,16 +993,16 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
             ) : (
               // Editable version
               editingName ? (
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={nameValue}
-                    onChange={(e) => setNameValue(e.target.value)}
-                    onBlur={handleNameSave}
-                    onKeyDown={handleNameKeyPress}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={nameValue}
+                  onChange={(e) => setNameValue(e.target.value)}
+                  onBlur={handleNameSave}
+                  onKeyDown={handleNameKeyPress}
                     className="absolute inset-0 text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
-                    autoFocus
-                  />
+                  autoFocus
+                />
                   {/* Placeholder layer that shows when input is empty */}
                   {nameValue.trim() === '' && (
                     <h1 className="absolute inset-0 text-3xl font-normal italic normal-case text-gray-400 font-poppins pointer-events-none z-5">
@@ -976,23 +1010,23 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                     </h1>
                   )}
                   {/* Background size reference */}
-                  <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
+                <h1 className="text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins opacity-0">
                     {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
                       `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
                       "Your name"
                     }
-                  </h1>
-                </div>
-              ) : (
-                <h1 
-                  className={`text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-                  onClick={handleNameClick}
-                >
+                </h1>
+              </div>
+            ) : (
+              <h1 
+                className={`text-3xl font-extrabold uppercase text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                onClick={handleNameClick}
+              >
                   {(finalDisplayData.personalInfo.firstName || finalDisplayData.personalInfo.lastName) ? 
                     `${finalDisplayData.personalInfo.firstName} ${finalDisplayData.personalInfo.lastName}`.trim() : 
                     (isEditable ? <span className="text-gray-400 italic font-normal normal-case">Your name</span> : "")
                   }
-                </h1>
+              </h1>
               )
             )}
             {useSampleData ? (
@@ -1003,26 +1037,26 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
             ) : (
               // Editable version
               editingRole ? (
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={roleValue}
-                    onChange={(e) => setRoleValue(e.target.value)}
-                    onBlur={handleRoleSave}
-                    onKeyDown={handleRoleKeyPress}
+              <div className="relative">
+                <input
+                  type="text"
+                  value={roleValue}
+                  onChange={(e) => setRoleValue(e.target.value)}
+                  onBlur={handleRoleSave}
+                  onKeyDown={handleRoleKeyPress}
                     className="absolute inset-0 text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter bg-white outline-none w-full rounded shadow-lg z-10 focus:ring-0 focus:border-0 placeholder:text-gray-400 placeholder:italic"
                     placeholder="Position"
-                    autoFocus
-                  />
-                  <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter opacity-0">
+                  autoFocus
+                />
+                <p className="text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter opacity-0">
                     {finalDisplayData.personalInfo.roleApplyingFor || "Position"}
-                  </p>
-                </div>
-              ) : (
-                <p 
-                  className={`text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
-                  onClick={handleRoleClick}
-                >
+                </p>
+              </div>
+            ) : (
+              <p 
+                className={`text-lg font-medium not-italic no-underline text-[#1e1e1e] pb-1 font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                onClick={handleRoleClick}
+              >
                   {finalDisplayData.personalInfo.roleApplyingFor || (isEditable ? <span className="text-gray-400 italic">Position</span> : "")}
                 </p>
               )
@@ -1038,15 +1072,15 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                 {/* Address Field */}
                 {editingAddress ? (
                   <span className="relative inline-block">
-                    <input
-                      type="text"
+                <input
+                  type="text"
                       value={addressValue}
                       onChange={(e) => setAddressValue(e.target.value)}
                       onBlur={handleAddressSave}
                       onKeyDown={handleAddressKeyPress}
                       className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
-                      autoFocus
-                    />
+                  autoFocus
+                />
                     {addressValue.trim() === '' && (
                       <span className="absolute inset-0 text-sm font-medium text-gray-400 font-inter italic pointer-events-none z-5 px-2 py-1">
                         City
@@ -1168,43 +1202,77 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
           </section>
 
           {/* Skills Section */}
-          {finalDisplayData.skills.length > 0 && (
+          {(finalDisplayData.skills.length > 0 || isEditable) && (
             <section className="mb-6">
               <h2 className="text-base font-semibold uppercase text-[#1e1e1e] tracking-widest mb-2 font-poppins">
                 Skills
               </h2>
               <hr className="border-t border-[#dfb160] w-full mb-3" />
-              <div className="grid grid-cols-3 gap-x-8 gap-y-2">
-                {finalDisplayData.skills.map((skill: Skill) => (
-                  <div key={skill.id} className="flex items-center">
-                    <span className="w-2 h-2 bg-[#dfb160] rounded-full mr-2"></span>
+              <div className="text-gray-700 text-sm font-inter leading-relaxed">
+                {finalDisplayData.skills.map((skill: Skill, index: number) => (
+                  <span key={skill.id}>
                     {editingSkill === skill.id ? (
-                      <div className="flex items-center flex-1 relative">
+                      <div className="inline-block relative">
                         <input
                           type="text"
                           value={skillValue}
                           onChange={(e) => setSkillValue(e.target.value)}
                           onBlur={handleSkillSave}
                           onKeyDown={handleSkillKeyPress}
-                          className="absolute inset-0 text-gray-700 text-sm font-inter bg-white outline-none flex-1 rounded shadow-lg z-10 focus:ring-0 focus:border-0"
+                          className="absolute inset-0 text-gray-700 text-sm font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-1"
                           autoFocus
                         />
-                        <span className="text-gray-700 text-sm font-inter flex-1 opacity-0">
+                        <span className="text-gray-700 text-sm font-inter opacity-0 px-1">
                           {skill.name}
                         </span>
                       </div>
                     ) : (
-                      <div className="flex items-center flex-1">
                         <span 
-                          className={`text-gray-700 text-sm font-inter flex-1 ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
+                        className={`text-gray-700 text-sm font-inter ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                           onClick={() => handleSkillClick(skill)}
                         >
                           {skill.name}
                         </span>
-                      </div>
                     )}
-                  </div>
+                    {index < finalDisplayData.skills.length - 1 && (
+                      <span className="text-gray-700 text-sm font-inter">, </span>
+                    )}
+                  </span>
                 ))}
+                
+                {/* Add Skill Input */}
+                {isAddingSkill && (
+                  <span>
+                    <div className="inline-block relative">
+                      <input
+                        type="text"
+                        value={newSkillValue}
+                        onChange={(e) => setNewSkillValue(e.target.value)}
+                        onBlur={handleAddSkillSave}
+                        onKeyDown={handleAddSkillKeyPress}
+                        className="text-gray-700 text-sm font-inter bg-white outline-none rounded shadow-lg focus:ring-0 focus:border-0 px-1 border border-gray-300"
+                        placeholder="Enter skill name"
+                        autoFocus
+                      />
+                    </div>
+                    {finalDisplayData.skills.length > 0 && (
+                      <span className="text-gray-700 text-sm font-inter">, </span>
+                    )}
+                  </span>
+                )}
+                
+                {/* Add Skill Button */}
+                {isEditable && !isAddingSkill && (
+                  <button
+                    onClick={handleAddSkillClick}
+                    className="inline-flex items-center text-[#22C8A9] hover:text-[#19ac97] text-sm font-inter ml-1"
+                  >
+                    <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                    </svg>
+                    Add skill
+                  </button>
+                )}
               </div>
             </section>
           )}

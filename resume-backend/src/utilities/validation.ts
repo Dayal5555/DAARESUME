@@ -21,11 +21,13 @@ export function sanitizeInput(input: string): string {
   return input.trim().replace(/[<>]/g, '');
 }
 
-export function validateRegisterRequest(data: unknown): data is RegisterRequest {
+export function validateRegisterRequest(
+  data: unknown
+): data is RegisterRequest {
   if (!data || typeof data !== 'object') return false;
-  
+
   const { username, email, password } = data as RegisterRequest;
-  
+
   return (
     typeof username === 'string' &&
     typeof email === 'string' &&
@@ -38,13 +40,13 @@ export function validateRegisterRequest(data: unknown): data is RegisterRequest 
 
 export function validateLoginRequest(data: unknown): data is LoginRequest {
   if (!data || typeof data !== 'object') return false;
-  
+
   const { email, password } = data as LoginRequest;
-  
+
   return (
     typeof email === 'string' &&
     typeof password === 'string' &&
     validateEmail(email) &&
     password.length > 0
   );
-} 
+}

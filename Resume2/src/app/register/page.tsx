@@ -50,8 +50,18 @@ export default function RegisterPage() {
       const data = await response.json();
 
       if (data.success) {
-        // TODO: Store JWT token in localStorage or cookies
+        // Store authentication data
+        localStorage.setItem('authToken', data.data?.token || 'logged-in');
+        localStorage.setItem('userData', JSON.stringify({
+          username: data.data?.user?.username || formData.name,
+          email: data.data?.user?.email || formData.email,
+          id: data.data?.user?.id || 'user-id'
+        }));
         console.log('Registration successful:', data);
+        
+        // Trigger navbar update
+        window.dispatchEvent(new Event('authStateChanged'));
+        
         router.push('/resume-builder'); // Redirect to resume builder
       } else {
         setError(data.message || 'Registration failed');

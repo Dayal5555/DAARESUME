@@ -9,7 +9,10 @@ dotenv.config();
 
 // Debug: Check if environment variables are loaded
 console.log('🔍 Environment check:');
-console.log('MONGODB_URI:', process.env['MONGODB_URI'] ? '✅ Set' : '❌ Not set');
+console.log(
+  'MONGODB_URI:',
+  process.env['MONGODB_URI'] ? '✅ Set' : '❌ Not set'
+);
 console.log('NODE_ENV:', process.env['NODE_ENV']);
 
 const app = express();
@@ -53,4 +56,4 @@ async function startServer(): Promise<void> {
 }
 
 // Start the server
-startServer(); 
+startServer();

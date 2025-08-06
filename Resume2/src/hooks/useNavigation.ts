@@ -38,4 +38,4 @@ export const useNavigation = () => {
     navigateToPricing,
     navigateToSettings,
   };
-}; 
+};

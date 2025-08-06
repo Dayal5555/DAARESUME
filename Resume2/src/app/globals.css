@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
   --background: #ffffff;
@@ -38,7 +38,9 @@ body {
   width: 210mm;
   height: 297mm;
   background: white;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
   overflow: hidden;
   margin: 0 auto;
   display: block;
@@ -61,7 +63,7 @@ body {
     padding: 0;
     box-shadow: none;
   }
-  
+
   body {
     margin: 0;
     padding: 0;
@@ -74,7 +76,7 @@ body {
   min-height: 297mm;
   margin: 2rem auto;
   background-color: white;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   padding: 2.5rem;
 }
 
@@ -86,4 +88,3 @@ body {
 .toggle-checkbox:checked + .toggle-label {
   background-color: #48bb78;
 }
-
