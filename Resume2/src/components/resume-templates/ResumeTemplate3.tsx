@@ -51,7 +51,14 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
   const [editingWebsite, setEditingWebsite] = useState(false);
   const [websiteValue, setWebsiteValue] = useState('');
 
-  console.log('ResumeTemplate3 rendering with data:', { personalInfo, experience, education, skills });
+  console.log('ResumeTemplate3 rendering with data:', { 
+    personalInfo, 
+    experience, 
+    education, 
+    skills,
+    useSampleData,
+    isEditable
+  });
 
   // Wait for data to be loaded from localStorage
   useEffect(() => {
@@ -80,7 +87,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
     experience: [
       {
         id: 'sample-1',
-        company: 'Morcelle Program',
+        company: 'Company1',
         position: 'Instrument Tech',
         location: 'San Francisco, CA',
         startDate: 'Jan 2024',
@@ -90,7 +97,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       },
       {
         id: 'sample-2',
-        company: 'XarrowAI Industries',
+        company: 'Company2',
         position: 'Internship',
         location: 'Austin, TX',
         startDate: 'Jun 2022',
@@ -130,8 +137,18 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                      (personalInfo.summary && personalInfo.summary.trim() !== '') ||
                      experience.length > 0 || education.length > 0 || skills.length > 0;
   
-  // Always use user data if it exists, otherwise use sample data
-  const finalDisplayData = hasUserData ? { personalInfo, experience, education, skills } : sampleData;
+  // For template page (useSampleData=true): Always use sample data
+  // For builder page (isEditable=true): Use user data if exists, otherwise show placeholders
+  const finalDisplayData = useSampleData ? sampleData : 
+                          (hasUserData ? { personalInfo, experience, education, skills } : { personalInfo: { firstName: '', lastName: '', email: '', phone: '', address: '', city: '', state: '', zipCode: '', summary: '', roleApplyingFor: '', website: '' }, experience: [], education: [], skills: [] });
+
+  console.log('ResumeTemplate3 - finalDisplayData:', {
+    hasUserData,
+    useSampleData,
+    isEditable,
+    experienceLength: finalDisplayData.experience.length,
+    experience: finalDisplayData.experience
+  });
 
   // Don't render until data is loaded to prevent flash of sample data
   if (!isDataLoaded) {
@@ -177,33 +194,10 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       const firstName = nameParts[0] || '';
       const lastName = nameParts.slice(1).join(' ') || '';
       
-      // Check if user has any data at all
-      const hasAnyUserData = personalInfo.firstName || personalInfo.lastName || personalInfo.email || 
-                            experience.length > 0 || education.length > 0 || skills.length > 0;
-      
-      // If user has no data yet, initialize with sample data
-      if (!hasAnyUserData) {
-        // Initialize all sections with sample data
-        sampleData.experience.forEach(exp => {
-          dispatch({ type: 'ADD_EXPERIENCE', payload: exp });
-        });
-        
-        sampleData.education.forEach(edu => {
-          dispatch({ type: 'ADD_EDUCATION', payload: edu });
-        });
-        
-        sampleData.skills.forEach(skill => {
-          dispatch({ type: 'ADD_SKILL', payload: skill });
-        });
-      }
-      
-      // Use existing personal info or sample data as base
-      const currentData = hasAnyUserData ? personalInfo : sampleData.personalInfo;
-      
       dispatch({
         type: 'UPDATE_PERSONAL_INFO',
         payload: { 
-          ...currentData, // Keep all existing data from current display
+          ...personalInfo, // Keep all existing personal info
           firstName, 
           lastName 
         }
@@ -250,36 +244,13 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
     }
   };
 
-  const handleSummarySave = () => {
+    const handleSummarySave = () => {
     if (isEditable && !useSampleData) {
-      // Check if user has any data at all
-      const hasAnyUserData = personalInfo.firstName || personalInfo.lastName || personalInfo.email || 
-                            experience.length > 0 || education.length > 0 || skills.length > 0;
-      
-      // If user has no data yet, initialize with sample data
-      if (!hasAnyUserData) {
-        // Initialize all sections with sample data
-        sampleData.experience.forEach(exp => {
-          dispatch({ type: 'ADD_EXPERIENCE', payload: exp });
-        });
-        
-        sampleData.education.forEach(edu => {
-          dispatch({ type: 'ADD_EDUCATION', payload: edu });
-        });
-        
-        sampleData.skills.forEach(skill => {
-          dispatch({ type: 'ADD_SKILL', payload: skill });
-        });
-      }
-      
-      // Use existing personal info or sample data as base
-      const currentData = hasAnyUserData ? personalInfo : sampleData.personalInfo;
-      
       dispatch({
         type: 'UPDATE_PERSONAL_INFO',
         payload: { 
-          ...currentData, // Keep all existing data from current display
-          summary: summaryValue
+          ...personalInfo, // Keep all existing personal info
+          summary: summaryValue 
         }
       });
     }
@@ -577,19 +548,17 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
       setEditingEducationDescription(null);
       
       setEditingAddress(true);
-      setAddressValue(`${finalDisplayData.personalInfo.address}, ${finalDisplayData.personalInfo.city}`);
+      setAddressValue(finalDisplayData.personalInfo.city || '');
     }
   };
 
   const handleAddressSave = () => {
     if (isEditable && !useSampleData) {
-      const [address, city] = addressValue.split(', ');
       dispatch({
         type: 'UPDATE_PERSONAL_INFO',
         payload: { 
           ...personalInfo,
-          address: address || '',
-          city: city || ''
+          city: addressValue
         }
       });
     }
@@ -1069,7 +1038,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
             ) : (
               // Editable version with placeholders
               <div className="text-sm font-medium text-gray-600 font-inter space-x-1">
-                {/* Address Field */}
+                {/* City Field */}
                 {editingAddress ? (
                   <span className="relative inline-block">
                 <input
@@ -1078,7 +1047,8 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                       onChange={(e) => setAddressValue(e.target.value)}
                       onBlur={handleAddressSave}
                       onKeyDown={handleAddressKeyPress}
-                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1 min-w-[120px]"
+                      style={{ width: Math.max(120, addressValue.length * 8) }}
                   autoFocus
                 />
                     {addressValue.trim() === '' && (
@@ -1092,10 +1062,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                     className={`${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                     onClick={handleAddressClick}
                   >
-                    {(finalDisplayData.personalInfo.address && finalDisplayData.personalInfo.city) ? 
-                      `${finalDisplayData.personalInfo.address}, ${finalDisplayData.personalInfo.city}` : 
-                      (isEditable ? <span className="text-gray-400 italic">City</span> : "")
-                    }
+                    {finalDisplayData.personalInfo.city || (isEditable ? <span className="text-gray-400 italic">City</span> : "")}
                   </span>
                 )}
                 
@@ -1110,7 +1077,8 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                       onChange={(e) => setEmailValue(e.target.value)}
                       onBlur={handleEmailSave}
                       onKeyDown={handleEmailKeyPress}
-                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1 min-w-[120px]"
+                      style={{ width: Math.max(120, emailValue.length * 8) }}
                       autoFocus
                     />
                     {emailValue.trim() === '' && (
@@ -1139,7 +1107,8 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                       onChange={(e) => setWebsiteValue(e.target.value)}
                       onBlur={handleWebsiteSave}
                       onKeyDown={handleWebsiteKeyPress}
-                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1"
+                      className="text-sm font-medium text-gray-600 font-inter bg-white outline-none rounded shadow-lg z-10 focus:ring-0 focus:border-0 px-2 py-1 min-w-[120px]"
+                      style={{ width: Math.max(120, websiteValue.length * 8) }}
                       autoFocus
                     />
                     {websiteValue.trim() === '' && (
@@ -1209,7 +1178,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
               </h2>
               <hr className="border-t border-[#dfb160] w-full mb-3" />
               <div className="text-gray-700 text-sm font-inter leading-relaxed">
-                {finalDisplayData.skills.map((skill: Skill, index: number) => (
+                {finalDisplayData.skills.length > 0 && finalDisplayData.skills.map((skill: Skill, index: number) => (
                   <span key={skill.id}>
                     {editingSkill === skill.id ? (
                       <div className="inline-block relative">
@@ -1278,13 +1247,14 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
           )}
 
           {/* Professional Experience Section */}
-          {finalDisplayData.experience.length > 0 && (
+          {(finalDisplayData.experience.length > 0 || isEditable) && (
             <section className="mb-6">
               <h2 className="text-base font-semibold uppercase text-[#1e1e1e] tracking-widest mb-2 font-poppins">
                 Professional Experience
               </h2>
               <hr className="border-t border-[#dfb160] w-full mb-3" />
-              {finalDisplayData.experience.map((exp: Experience, index: number) => (
+              {finalDisplayData.experience.length > 0 ? (
+                finalDisplayData.experience.map((exp: Experience, index: number) => (
                 <div key={exp.id} className={index < finalDisplayData.experience.length - 1 ? "mb-4" : ""}>
                   <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
                     {editingExperienceTitle === exp.id ? (
@@ -1299,7 +1269,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                           autoFocus
                         />
                         <h3 className="font-bold text-sm text-[#1e1e1e] font-poppins opacity-0">
-                          {exp.position}, {exp.company}
+                          {exp.position}, Company{index + 1}
                         </h3>
                       </div>
                     ) : (
@@ -1307,7 +1277,7 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                         className={`font-bold text-sm text-[#1e1e1e] font-poppins ${isEditable ? 'cursor-pointer hover:bg-blue-50 px-1 rounded' : ''}`}
                         onClick={() => handleExperienceTitleClick(exp)}
                       >
-                        {exp.position}, {exp.company}
+                        {exp.position}, Company{index + 1}
                       </h3>
                     )}
                     {editingExperienceDates === exp.id ? (
@@ -1363,18 +1333,24 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                     </p>
                   )}
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="text-gray-400 italic text-sm">
+                  • Company 1
+                </div>
+              )}
             </section>
           )}
 
           {/* Education Section */}
-          {finalDisplayData.education.length > 0 && (
+          {(finalDisplayData.education.length > 0 || isEditable) && (
             <section className="mb-6">
               <h2 className="text-base font-semibold uppercase text-[#1e1e1e] tracking-widest mb-2 font-poppins">
                 Education
               </h2>
               <hr className="border-t border-[#dfb160] w-full mb-3" />
-              {finalDisplayData.education.map((edu: Education, index: number) => (
+              {finalDisplayData.education.length > 0 ? (
+                finalDisplayData.education.map((edu: Education, index: number) => (
                 <div key={edu.id}>
                   <div className="flex flex-col sm:flex-row justify-between sm:items-baseline mb-2">
                     {editingEducationDegree === edu.id ? (
@@ -1477,7 +1453,12 @@ const ResumeTemplate3: React.FC<ResumeTemplate3Props> = ({ useSampleData = false
                     </div>
                   )}
                 </div>
-              ))}
+              ))
+              ) : (
+                <div className="text-gray-400 italic text-sm">
+                  • College and university name
+                </div>
+              )}
             </section>
           )}
           
